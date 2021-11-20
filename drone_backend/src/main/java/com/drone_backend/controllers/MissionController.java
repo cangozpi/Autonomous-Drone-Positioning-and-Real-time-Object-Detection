@@ -3,10 +3,7 @@ package com.drone_backend.controllers;
 import com.drone_backend.models.MissionRequestModel;
 import com.drone_backend.services.MissionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 
 @RestController
 public class MissionController {
@@ -22,9 +19,4 @@ public class MissionController {
         return missionService.uploadMissionService(missionRequest.getPositions(), missionRequest.getLinear_velocity(), missionRequest.getAngular_velocity());
     }
 
-    @GetMapping("/test")
-    @ResponseBody
-    public String testPath(){
-        return "hello";
-    }
 }

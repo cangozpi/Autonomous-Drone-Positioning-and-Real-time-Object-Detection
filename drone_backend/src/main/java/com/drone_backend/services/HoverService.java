@@ -8,18 +8,18 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 @Service
-public class MissionService {
+public class HoverService {
 
     @Autowired
     CommandLineService commandLineService;
 
-    public boolean uploadMissionService(ArrayList<Integer> positions, double linearVelocity,
-                                     double angularVelocity){
+    public boolean uploadHoverService(ArrayList<Integer> positions, double linearVelocity,
+                                        double angularVelocity, int duration){
         // Create the command string
         Path currentPath = FileSystems.getDefault().getPath(".").toAbsolutePath();
         String scriptPath = currentPath.toString().substring(0, currentPath.toString().length()-15);
         scriptPath += "python_control_scripts";
-        scriptPath += "/my_mission_script.py";
+        scriptPath += "/my_hover_script.py";
         String cmdStr = "python2.7 " + scriptPath;
         // add --positions args
         String posStr = " --positions";
@@ -32,8 +32,11 @@ public class MissionService {
         //add --angular_velocity args
         String angVelStr = " --angular_velocity";
         angVelStr += " " + String.valueOf(angularVelocity);
+        //add --duration args
+        String durStr = " --duration";
+        durStr += " " + String.valueOf(duration);
 
-        cmdStr += posStr + linVelStr + angVelStr;
+        cmdStr += posStr + linVelStr + angVelStr + durStr;
 
         // Call the script from the command line
         return commandLineService.runOnCommandLine(cmdStr);
