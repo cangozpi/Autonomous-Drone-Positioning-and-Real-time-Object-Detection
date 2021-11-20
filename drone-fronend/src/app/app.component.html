@@ -4,6 +4,7 @@
 
 
 <!-- Accordion start-->
+<!-- Mission Mode Panel start-->
 <cdk-accordion class="example-accordion">
   <cdk-accordion-item
     #accordionItem1="cdkAccordionItem"
@@ -14,7 +15,7 @@
     [attr.aria-expanded]="accordionItem1.expanded"
     [attr.aria-controls]="'accordion-body-1'">
     <div class="example-accordion-item-header" (click)="accordionItem1.toggle()">
-      HEYOO1
+      Mission Mode
       <span class="example-accordion-item-description">
         Click to {{ accordionItem1.expanded ? 'close' : 'open' }}
       </span>
@@ -25,12 +26,25 @@
       [style.display]="accordionItem1.expanded ? '' : 'none'"
       [attr.id]="'accordion-body-1'"
       [attr.aria-labelledby]="'accordion-header-1'">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perferendis
-      excepturi incidunt ipsum deleniti labore, tempore non nam doloribus blanditiis
-      veritatis illo autem iure aliquid ullam rem tenetur deserunt velit culpa?
+      <form [formGroup]="missionForm"  (ngSubmit)="onSubmitMission()">
+
+        <label for="positions">Waypoints: </label>
+        <input id="positions" type="text" formControlName="positions">
+      
+        <label for="linearVelocity">Linear Velocity: </label>
+        <input id="linearVelocity" type="number" formControlName="linearVelocity">
+
+        <label for="angularVelocity">Angular Velocity: </label>
+        <input id="angularVelocity" type="number" formControlName="angularVelocity">
+      
+        <button type="submit" [disabled]="!missionForm.valid">Start Mission</button>
+      
+      </form>
     </div>
   </cdk-accordion-item>
+  <!-- Mission Mode Panel stop-->
 
+  <!-- Surveillance Mode Panel start-->
   <cdk-accordion-item
     #accordionItem2="cdkAccordionItem"
     class="example-accordion-item"
@@ -40,7 +54,7 @@
     [attr.aria-expanded]="accordionItem2.expanded"
     [attr.aria-controls]="'accordion-body-2'">
     <div class="example-accordion-item-header" (click)="accordionItem2.toggle()">
-      HEYOO2
+      Surveillance Mode
       <span class="example-accordion-item-description">
         Click to {{ accordionItem2.expanded ? 'close' : 'open' }}
       </span>
@@ -51,12 +65,30 @@
       [style.display]="accordionItem2.expanded ? '' : 'none'"
       [attr.id]="'accordion-body-2'"
       [attr.aria-labelledby]="'accordion-header-2'">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perferendis
-      excepturi incidunt ipsum deleniti labore, tempore non nam doloribus blanditiis
-      veritatis illo autem iure aliquid ullam rem tenetur deserunt velit culpa?
+      
+      <form [formGroup]="surveillanceForm"  (ngSubmit)="onSubmitSurveillance()">
+
+        <label for="positions">Waypoints: </label>
+        <input id="positions" type="text" formControlName="positions">
+      
+        <label for="linearVelocity">Linear Velocity: </label>
+        <input id="linearVelocity" type="number" formControlName="linearVelocity">
+
+        <label for="angularVelocity">Angular Velocity: </label>
+        <input id="angularVelocity" type="number" formControlName="angularVelocity">
+        
+        <label for="numTour">Number of Tours: </label>
+        <input id="numTour" type="number" formControlName="numTour">
+      
+        <button type="submit" [disabled]="!surveillanceForm.valid">Start Surveillance</button>
+      
+      </form>
+
     </div>
   </cdk-accordion-item>
+  <!-- Surveillance Mode Panel stop-->
 
+  <!-- Hover Mode Panel start-->
   <cdk-accordion-item
     #accordionItem3="cdkAccordionItem"
     class="example-accordion-item"
@@ -66,7 +98,7 @@
     [attr.aria-expanded]="accordionItem3.expanded"
     [attr.aria-controls]="'accordion-body-3'">
     <div class="example-accordion-item-header" (click)="accordionItem3.toggle()">
-      HEYOO3
+      Hover Mode
       <span class="example-accordion-item-description">
         Click to {{ accordionItem3.expanded ? 'close' : 'open' }}
       </span>
@@ -77,51 +109,28 @@
       [style.display]="accordionItem3.expanded ? '' : 'none'"
       [attr.id]="'accordion-body-3'"
       [attr.aria-labelledby]="'accordion-header-3'">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perferendis
-      excepturi incidunt ipsum deleniti labore, tempore non nam doloribus blanditiis
-      veritatis illo autem iure aliquid ullam rem tenetur deserunt velit culpa?
+      
+      <form [formGroup]="hoverForm"  (ngSubmit)="onSubmitHover()">
+
+        <label for="positions">Waypoints: </label>
+        <input id="positions" type="text" formControlName="positions">
+      
+        <label for="linearVelocity">Linear Velocity: </label>
+        <input id="linearVelocity" type="number" formControlName="linearVelocity">
+
+        <label for="angularVelocity">Angular Velocity: </label>
+        <input id="angularVelocity" type="number" formControlName="angularVelocity">
+        
+        <label for="duration">Duration: </label>
+        <input id="duration" type="number" formControlName="duration">
+      
+        <button type="submit" [disabled]="!hoverForm.valid">Start Hover</button>
+      
+      </form>
+
     </div>
   </cdk-accordion-item>
+  <!-- Hover Mode Panel stop-->
 </cdk-accordion>
 
 <!-- Accordion end-->
-
-<!-- Expansion/Accordion panel start-->
-<mat-accordion>
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        This is the expansion title
-      </mat-panel-title>
-      <mat-panel-description>
-        This is a summary of the content
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <p>This is the primary content of the panel.</p>
-  </mat-expansion-panel>
-  
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Self aware panel
-      </mat-panel-title>
-      <mat-panel-description>
-        Currently I am 
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <p>I'm visible because I am open</p>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Self aware panel
-      </mat-panel-title>
-      <mat-panel-description>
-        Currently I am 
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <p>I'm visible because I am open</p>
-  </mat-expansion-panel>
-</mat-accordion>
-<!-- Expansion/Accordion panel end-->
