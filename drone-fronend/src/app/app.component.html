@@ -1,4 +1,87 @@
 <div>
   <h1>Drone Project</h1>
-  <mat-slider min="1" max="100" step="1" value="50"></mat-slider>
 </div>
+
+
+  <!-- Accordion start-->
+  <cdk-accordion class="example-accordion">
+    <cdk-accordion-item
+      #accordionItem1="cdkAccordionItem"
+      class="example-accordion-item"
+      role="button"
+      tabindex="0"
+      [attr.id]="'accordion-header-1'"
+      [attr.aria-expanded]="accordionItem1.expanded"
+      [attr.aria-controls]="'accordion-body-1'">
+      <div class="example-accordion-item-header" (click)="accordionItem1.toggle()">
+        HEYOO1
+        <span class="example-accordion-item-description">
+          Click to {{ accordionItem1.expanded ? 'close' : 'open' }}
+        </span>
+      </div>
+      <div
+        class="example-accordion-item-body"
+        role="region"
+        [style.display]="accordionItem1.expanded ? '' : 'none'"
+        [attr.id]="'accordion-body-1'"
+        [attr.aria-labelledby]="'accordion-header-1'">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perferendis
+        excepturi incidunt ipsum deleniti labore, tempore non nam doloribus blanditiis
+        veritatis illo autem iure aliquid ullam rem tenetur deserunt velit culpa?
+      </div>
+    </cdk-accordion-item>
+
+    <cdk-accordion-item
+      #accordionItem2="cdkAccordionItem"
+      class="example-accordion-item"
+      role="button"
+      tabindex="0"
+      [attr.id]="'accordion-header-2'"
+      [attr.aria-expanded]="accordionItem2.expanded"
+      [attr.aria-controls]="'accordion-body-2'">
+      <div class="example-accordion-item-header" (click)="accordionItem2.toggle()">
+        HEYOO2
+        <span class="example-accordion-item-description">
+          Click to {{ accordionItem2.expanded ? 'close' : 'open' }}
+        </span>
+      </div>
+      <div
+        class="example-accordion-item-body"
+        role="region"
+        [style.display]="accordionItem2.expanded ? '' : 'none'"
+        [attr.id]="'accordion-body-2'"
+        [attr.aria-labelledby]="'accordion-header-2'">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perferendis
+        excepturi incidunt ipsum deleniti labore, tempore non nam doloribus blanditiis
+        veritatis illo autem iure aliquid ullam rem tenetur deserunt velit culpa?
+      </div>
+    </cdk-accordion-item>
+
+    <cdk-accordion-item
+      #accordionItem3="cdkAccordionItem"
+      class="example-accordion-item"
+      role="button"
+      tabindex="0"
+      [attr.id]="'accordion-header-3'"
+      [attr.aria-expanded]="accordionItem3.expanded"
+      [attr.aria-controls]="'accordion-body-3'">
+      <div class="example-accordion-item-header" (click)="accordionItem3.toggle()">
+        HEYOO3
+        <span class="example-accordion-item-description">
+          Click to {{ accordionItem3.expanded ? 'close' : 'open' }}
+        </span>
+      </div>
+      <div
+        class="example-accordion-item-body"
+        role="region"
+        [style.display]="accordionItem3.expanded ? '' : 'none'"
+        [attr.id]="'accordion-body-3'"
+        [attr.aria-labelledby]="'accordion-header-3'">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perferendis
+        excepturi incidunt ipsum deleniti labore, tempore non nam doloribus blanditiis
+        veritatis illo autem iure aliquid ullam rem tenetur deserunt velit culpa?
+      </div>
+    </cdk-accordion-item>
+  </cdk-accordion>
+  
+  <!-- Accordion end-->
