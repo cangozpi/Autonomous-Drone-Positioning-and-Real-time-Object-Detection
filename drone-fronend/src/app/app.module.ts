@@ -18,5 +18,4 @@ import { MaterialModule } from './material/material.module';
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  
- }
+}
