@@ -6,6 +6,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 
 /* For form*/
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 
 const MaterialComponents = [
@@ -13,7 +14,8 @@ const MaterialComponents = [
   CdkAccordionModule,
   MatExpansionModule,
   MatFormFieldModule,
-  ReactiveFormsModule
+  ReactiveFormsModule,
+  HttpClientModule
 ];
 
 @NgModule({

@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 
 //for form
 import { FormGroup, FormControl } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-root',
@@ -10,6 +12,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 
 export class AppComponent {
+  constructor(private http: HttpClient) {}
   
   missionForm = new FormGroup({
     positions: new FormControl(''),
@@ -47,7 +50,10 @@ export class AppComponent {
     }
 
     //make POST request to server for /missionUpload
-
+    let url = "http://localhost:8080/uploadMission"; //TODO: change localhost 
+    this.http.post(url, missionRequestTemplate).toPromise().then((data:any) => {
+      console.log(data.json)
+    })
 
   }
 
@@ -88,13 +94,6 @@ export class AppComponent {
     //make POST request to server for /hoverUpload
 
   }
-
-  // Sample mission
-//   {
-//     "positions": [10, 10, 10, 50, 50, 20, 50, -50, 20, -50, -50, 20, 0, 0, 20],
-//     "linear_velocity":5,
-//     "angular_velocity":5
-// }
 
 
 }
