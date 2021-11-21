@@ -28,17 +28,28 @@
       [attr.aria-labelledby]="'accordion-header-1'">
       <form [formGroup]="missionForm"  (ngSubmit)="onSubmitMission()">
 
-        <label for="positions">Waypoints: </label>
-        <input id="positions" type="text" formControlName="positions">
-      
-        <label for="linearVelocity">Linear Velocity: </label>
-        <input id="linearVelocity" type="number" formControlName="linearVelocity">
+        <mat-form-field appearance="outline">
+          <mat-label>Waypoints</mat-label>
+          <input formControlName="positions" type="text" matInput placeholder="x1 y1 z1 x2 y2 z2 ... xn yn zn">
+          <mat-icon matSuffix>gps_fixed</mat-icon>
+        </mat-form-field>
 
-        <label for="angularVelocity">Angular Velocity: </label>
-        <input id="angularVelocity" type="number" formControlName="angularVelocity">
-      
-        <button type="submit" [disabled]="!missionForm.valid">Start Mission</button>
-      
+        <mat-form-field appearance="outline">
+          <mat-label>Linear Velocity</mat-label>
+          <input formControlName="linearVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Angular Velocity</mat-label>
+          <input formControlName="angularVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+        
+        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Mission
+          <mat-icon matSuffix>play_arrow</mat-icon>
+        </button>
+
       </form>
     </div>
   </cdk-accordion-item>
@@ -68,20 +79,34 @@
       
       <form [formGroup]="surveillanceForm"  (ngSubmit)="onSubmitSurveillance()">
 
-        <label for="positions">Waypoints: </label>
-        <input id="positions" type="text" formControlName="positions">
-      
-        <label for="linearVelocity">Linear Velocity: </label>
-        <input id="linearVelocity" type="number" formControlName="linearVelocity">
+        <mat-form-field appearance="outline">
+          <mat-label>Waypoints</mat-label>
+          <input formControlName="positions" type="text" matInput placeholder="x1 y1 z1 x2 y2 z2 ... xn yn zn">
+          <mat-icon matSuffix>gps_fixed</mat-icon>
+        </mat-form-field>
 
-        <label for="angularVelocity">Angular Velocity: </label>
-        <input id="angularVelocity" type="number" formControlName="angularVelocity">
+        <mat-form-field appearance="outline">
+          <mat-label>Linear Velocity</mat-label>
+          <input formControlName="linearVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Angular Velocity</mat-label>
+          <input formControlName="angularVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Number of tours</mat-label>
+          <input formControlName="numTour" type="number" matInput placeholder="1">
+          <mat-icon matSuffix>repeat</mat-icon>
+        </mat-form-field>
         
-        <label for="numTour">Number of Tours: </label>
-        <input id="numTour" type="number" formControlName="numTour">
-      
-        <button type="submit" [disabled]="!surveillanceForm.valid">Start Surveillance</button>
-      
+        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Surveillance
+          <mat-icon matSuffix>play_arrow</mat-icon>
+        </button>
+
       </form>
 
     </div>
@@ -112,19 +137,34 @@
       
       <form [formGroup]="hoverForm"  (ngSubmit)="onSubmitHover()">
 
-        <label for="positions">Waypoints: </label>
-        <input id="positions" type="text" formControlName="positions">
-      
-        <label for="linearVelocity">Linear Velocity: </label>
-        <input id="linearVelocity" type="number" formControlName="linearVelocity">
 
-        <label for="angularVelocity">Angular Velocity: </label>
-        <input id="angularVelocity" type="number" formControlName="angularVelocity">
+        <mat-form-field appearance="outline">
+          <mat-label>Waypoints</mat-label>
+          <input formControlName="positions" type="text" matInput placeholder="x1 y1 z1 x2 y2 z2 ... xn yn zn">
+          <mat-icon matSuffix>gps_fixed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Linear Velocity</mat-label>
+          <input formControlName="linearVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Angular Velocity</mat-label>
+          <input formControlName="angularVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Duration</mat-label>
+          <input formControlName="duration" type="number" matInput placeholder="10">
+          <mat-icon matSuffix>alarm</mat-icon>
+        </mat-form-field>
         
-        <label for="duration">Duration: </label>
-        <input id="duration" type="number" formControlName="duration">
-      
-        <button type="submit" [disabled]="!hoverForm.valid">Start Hover</button>
+        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Hover
+          <mat-icon matSuffix>play_arrow</mat-icon>
+        </button>
       
       </form>
 

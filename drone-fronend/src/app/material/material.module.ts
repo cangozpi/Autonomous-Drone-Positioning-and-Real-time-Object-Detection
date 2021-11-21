@@ -3,6 +3,10 @@ import { MatSliderModule } from '@angular/material/slider';
 import {CdkAccordionModule} from '@angular/cdk/accordion';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+
 
 /* For form*/
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +19,10 @@ const MaterialComponents = [
   MatExpansionModule,
   MatFormFieldModule,
   ReactiveFormsModule,
-  HttpClientModule
+  HttpClientModule,
+  MatInputModule,
+  MatIconModule,
+  MatButtonModule
 ];
 
 @NgModule({

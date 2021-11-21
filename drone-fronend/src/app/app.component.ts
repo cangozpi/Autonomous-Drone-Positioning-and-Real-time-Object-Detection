@@ -48,7 +48,7 @@ export class AppComponent {
       linear_velocity: this.missionForm.value.linearVelocity,
       angular_velocity: this.missionForm.value.angularVelocity
     }
-
+    
     //make POST request to server for /missionUpload
     let url = "http://localhost:8080/uploadMission"; //TODO: change localhost 
     this.http.post(url, missionRequestTemplate).toPromise().then((data:any) => {
@@ -72,7 +72,7 @@ export class AppComponent {
       angular_velocity: this.surveillanceForm.value.angularVelocity,
       tour_num: this.surveillanceForm.value.numTour
     }
-
+    
     //make POST request to server for /surveillanceUpload
     let url = "http://localhost:8080/uploadSurveillance"; //TODO: change localhost 
     this.http.post(url, surveillanceRequestTemplate).toPromise().then((data:any) => {
@@ -95,7 +95,7 @@ export class AppComponent {
       angular_velocity: this.hoverForm.value.angularVelocity,
       duration: this.hoverForm.value.duration
     }
-
+    
     //make POST request to server for /hoverUpload
     let url = "http://localhost:8080/uploadHover"; //TODO: change localhost 
     this.http.post(url, hoverRequestTemplate).toPromise().then((data:any) => {
