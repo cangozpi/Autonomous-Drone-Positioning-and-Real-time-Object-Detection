@@ -52,7 +52,7 @@ export class AppComponent {
     //make POST request to server for /missionUpload
     let url = "http://localhost:8080/uploadMission"; //TODO: change localhost 
     this.http.post(url, missionRequestTemplate).toPromise().then((data:any) => {
-      console.log(data.json)
+      console.log(data)
     })
 
   }
@@ -69,17 +69,21 @@ export class AppComponent {
     let surveillanceRequestTemplate = {
       positions: posArray,
       linear_velocity: this.surveillanceForm.value.linearVelocity,
-      angular_velocity: this.surveillanceForm.value.angularVelocity
+      angular_velocity: this.surveillanceForm.value.angularVelocity,
+      tour_num: this.surveillanceForm.value.numTour
     }
 
     //make POST request to server for /surveillanceUpload
-    
+    let url = "http://localhost:8080/uploadSurveillance"; //TODO: change localhost 
+    this.http.post(url, surveillanceRequestTemplate).toPromise().then((data:any) => {
+      console.log(data)
+    })
   }
 
   onSubmitHover() {
     //convert positions form value to the desired array format
     let posArray:any = [];
-    let pos:any = this.missionForm.value.positions.split(" ")
+    let pos:any = this.hoverForm.value.positions.split(" ")
     for(let i = 0; i < pos.length; i++){
       posArray.push(pos[i]) 
     }
@@ -88,11 +92,15 @@ export class AppComponent {
     let hoverRequestTemplate = {
       positions: posArray,
       linear_velocity: this.hoverForm.value.linearVelocity,
-      angular_velocity: this.hoverForm.value.angularVelocity
+      angular_velocity: this.hoverForm.value.angularVelocity,
+      duration: this.hoverForm.value.duration
     }
 
     //make POST request to server for /hoverUpload
-
+    let url = "http://localhost:8080/uploadHover"; //TODO: change localhost 
+    this.http.post(url, hoverRequestTemplate).toPromise().then((data:any) => {
+      console.log(data)
+    })
   }
 
 

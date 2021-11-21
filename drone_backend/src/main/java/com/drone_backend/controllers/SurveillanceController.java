@@ -12,6 +12,7 @@ public class SurveillanceController {
     SurveillanceService surveillanceService;
 
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/uploadSurveillance")
     @ResponseBody
     public boolean uploadMission(@RequestBody SurveillanceRequestModel surveillanceRequest){
