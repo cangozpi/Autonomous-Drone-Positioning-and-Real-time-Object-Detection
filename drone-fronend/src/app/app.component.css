@@ -53,4 +53,11 @@
   }
 
 /* Expansion/Accordion styling stop*/
+
+
+/* Angular Google Maps(AGM) styling start*/
+agm-map {
+    height: 300px;
+  }
+/* Angular Google Maps(AGM) styling start*/
   
