@@ -1,5 +1,5 @@
 """
-Sample Call $python3.8 expose_stream.py --source 0
+Sample Call $python3.8 expose_stream.py --source 0 --droneLiveStream 
 """
 from flask import Flask, render_template, Response
 import cv2
@@ -10,13 +10,9 @@ import sys
 from pathlib import Path
 
 sys.path.append(str(Path('.').absolute().parent.parent))
-print(str(Path('.').absolute().parent.parent))
-
 from detect import *
-# --
+# -- end
 
-outputFrame = None
-lock = threading.Lock()
 
 #Initialize the Flask app
 app = Flask(__name__)
@@ -27,56 +23,29 @@ for local webcam use cv2.VideoCapture(0)
 '''
 
 def gen_frames():  
-    # grab global references to the output frame and lock variables
-    global outputFrame, lock
     # loop over frames from the output stream
     while True:
         # wait until the lock is acquired
-        with lock:
+        with StreamConfig.lock:
             # check if the output frame is available, otherwise skip
             # the iteration of the loop
-            if outputFrame is None:
+            if StreamConfig.outputFrame is None:
                 continue
             # encode the frame in JPEG format
-            (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+            (flag, encodedImage) = cv2.imencode(".jpg", StreamConfig.outputFrame)
             if not flag:
                 continue
             encodedImage = encodedImage.tobytes()
         yield (b'--frame\r\n'
             b'Content-Type: image/jpeg\r\n\r\n' + encodedImage + b'\r\n')
 
-   
-        
-
-"""def detect():
-	# grab global references to the video stream, output frame, and
-	# lock variables
-    global camera, outputFrame, lock
-	
-    # loop over frames from the video stream
-    while True:
-		# read the next frame from the video stream, resize it,
-		# convert the frame to grayscale, and blur it
-        success, frame = camera.read()
-        if not success:
-            break
-        else:
-            # acquire the lock, set the output frame, and release the
-            # lock
-            with lock:
-                outputFrame = frame.copy()"""
-
 
 ## test start--
 
 def detect(opt):
-	# grab global references to the video stream, output frame, and
-	# lock variables
+	# run object detector on live stream and update StreamConfig.output using the annotated frame of the video
     main(opt)
-            # acquire the lock, set the output frame, and release the
-            # lock
-            #with lock:
-            #    outputFrame = frame.copy()
+            
 
 ## test end--
 

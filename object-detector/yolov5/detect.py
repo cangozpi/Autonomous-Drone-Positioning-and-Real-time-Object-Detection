@@ -34,6 +34,10 @@ from utils.general import (LOGGER, check_file, check_img_size, check_imshow, che
 from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, time_sync
 
+# -- Read in global parameters
+import utils.drone_project_utils.streamConfig as StreamConfig
+# -- end
+
 
 @torch.no_grad()
 def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
@@ -61,6 +65,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
         hide_conf=False,  # hide confidences
         half=False,  # use FP16 half-precision inference
         dnn=False,  # use OpenCV DNN for ONNX inference
+        droneLiveStream=False # Serve object detectors annotated output using flask backend server
         ):
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
@@ -167,7 +172,14 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
 
             # Stream results
             im0 = annotator.result()
-            if view_img:
+            
+            # update StreamConfig.output with the annotated frame which will be served via backend
+            if droneLiveStream:
+                with StreamConfig.lock:
+                    StreamConfig.outputFrame = im0.copy()
+            # --end
+
+            if view_img and not droneLiveStream:
                 cv2.imshow(str(p), im0)
                 cv2.waitKey(1)  # 1 millisecond
 
@@ -227,6 +239,7 @@ def parse_opt():
     parser.add_argument('--hide-conf', default=False, action='store_true', help='hide confidences')
     parser.add_argument('--half', action='store_true', help='use FP16 half-precision inference')
     parser.add_argument('--dnn', action='store_true', help='use OpenCV DNN for ONNX inference')
+    parser.add_argument('--droneLiveStream', action='store_true', help='serve object detectors annotated output using flask backend server')
     opt = parser.parse_args()
     opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
     print_args(FILE.stem, opt)
