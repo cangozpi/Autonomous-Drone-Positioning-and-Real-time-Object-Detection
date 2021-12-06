@@ -179,7 +179,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     StreamConfig.outputFrame = im0.copy()
             # --end
 
-            if view_img and not droneLiveStream:
+            if view_img and (not droneLiveStream or view_img):
                 cv2.imshow(str(p), im0)
                 cv2.waitKey(1)  # 1 millisecond
 
