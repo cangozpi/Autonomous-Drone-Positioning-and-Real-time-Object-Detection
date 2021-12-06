@@ -1,3 +1,6 @@
+"""
+Sample Call $python3.8 expose_stream.py --source 0
+"""
 from flask import Flask, render_template, Response
 import cv2
 import threading
@@ -5,20 +8,11 @@ import threading
 # -- import detect.py from upper directory
 import sys
 from pathlib import Path
+
 sys.path.append(str(Path('.').absolute().parent.parent))
 print(str(Path('.').absolute().parent.parent))
 
-# Now you can import your module 
-from yolov5.detect import *
-
-#from ...detect import *
-
-#import sys
-# setting path
-#sys.path.append('../../yolov5')
-  
-# importing
-#from yolov5.detect import *
+from detect import *
 # --
 
 outputFrame = None
@@ -26,8 +20,6 @@ lock = threading.Lock()
 
 #Initialize the Flask app
 app = Flask(__name__)
-
-camera = cv2.VideoCapture(0)
 
 '''
 for ip camera use - rtsp://username:password@ip_address:554/user=username_password='password'_channel=channel_number_stream=0.sdp' 
