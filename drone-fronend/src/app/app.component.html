@@ -5,6 +5,12 @@
 
 <!-- Google Maps start -->
 <div class="full" id="map"></div>
+
+<div id="floating-panel">
+  <input id="hide-markers" type="button" value="Hide Markers" (click)="hideMarkers()"/>
+  <input id="show-markers" type="button" value="Show Markers" (click)="showMarkers()"/>
+  <input id="delete-markers" type="button" value="Delete Markers" (click)="deleteMarkers()"/>
+</div>
 <!-- Google Maps end -->
 
 
@@ -23,6 +29,7 @@
 <!-- Accordion start-->
 <!-- Mission Mode Panel start-->
 <cdk-accordion class="example-accordion">
+  <!-- ALL coordinate custom flight modes start-->
   <cdk-accordion-item
     #accordionItem1="cdkAccordionItem"
     class="example-accordion-item"
@@ -32,7 +39,7 @@
     [attr.aria-expanded]="accordionItem1.expanded"
     [attr.aria-controls]="'accordion-body-1'">
     <div class="example-accordion-item-header" (click)="accordionItem1.toggle()">
-      Mission Mode
+      Mission Mode (ALL)
       <span class="example-accordion-item-description">
         Click to {{ accordionItem1.expanded ? 'close' : 'open' }}
       </span>
@@ -82,7 +89,7 @@
     [attr.aria-expanded]="accordionItem2.expanded"
     [attr.aria-controls]="'accordion-body-2'">
     <div class="example-accordion-item-header" (click)="accordionItem2.toggle()">
-      Surveillance Mode
+      Surveillance Mode (ALL)
       <span class="example-accordion-item-description">
         Click to {{ accordionItem2.expanded ? 'close' : 'open' }}
       </span>
@@ -140,7 +147,7 @@
     [attr.aria-expanded]="accordionItem3.expanded"
     [attr.aria-controls]="'accordion-body-3'">
     <div class="example-accordion-item-header" (click)="accordionItem3.toggle()">
-      Hover Mode
+      Hover Mode (ALL)
       <span class="example-accordion-item-description">
         Click to {{ accordionItem3.expanded ? 'close' : 'open' }}
       </span>
@@ -188,6 +195,176 @@
     </div>
   </cdk-accordion-item>
   <!-- Hover Mode Panel stop-->
+  <!-- ALL coordinate custom flight modes finish-->
+
+
+  <!-- NED coordinate custom flight modes start-->
+  <cdk-accordion-item
+    #accordionItem4="cdkAccordionItem"
+    class="example-accordion-item"
+    role="button"
+    tabindex="0"
+    [attr.id]="'accordion-header-4'"
+    [attr.aria-expanded]="accordionItem1.expanded"
+    [attr.aria-controls]="'accordion-body-4'">
+    <div class="example-accordion-item-header" (click)="accordionItem4.toggle()">
+      Mission Mode (NED)
+      <span class="example-accordion-item-description">
+        Click to {{ accordionItem1.expanded ? 'close' : 'open' }}
+      </span>
+    </div>
+    <div
+      class="example-accordion-item-body"
+      role="region"
+      [style.display]="accordionItem4.expanded ? '' : 'none'"
+      [attr.id]="'accordion-body-4'"
+      [attr.aria-labelledby]="'accordion-header-4'">
+      <form [formGroup]="missionForm"  (ngSubmit)="onSubmitMission()">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Waypoints</mat-label>
+          <input formControlName="positions" type="text" matInput placeholder="x1 y1 z1 x2 y2 z2 ... xn yn zn">
+          <mat-icon matSuffix>gps_fixed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Linear Velocity</mat-label>
+          <input formControlName="linearVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Angular Velocity</mat-label>
+          <input formControlName="angularVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+        
+        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Mission
+          <mat-icon matSuffix>play_arrow</mat-icon>
+        </button>
+
+      </form>
+    </div>
+  </cdk-accordion-item>
+  <!-- Mission Mode Panel stop-->
+
+  <!-- Surveillance Mode Panel start-->
+  <cdk-accordion-item
+    #accordionItem5="cdkAccordionItem"
+    class="example-accordion-item"
+    role="button"
+    tabindex="0"
+    [attr.id]="'accordion-header-5'"
+    [attr.aria-expanded]="accordionItem2.expanded"
+    [attr.aria-controls]="'accordion-body-5'">
+    <div class="example-accordion-item-header" (click)="accordionItem5.toggle()">
+      Surveillance Mode (NED)
+      <span class="example-accordion-item-description">
+        Click to {{ accordionItem5.expanded ? 'close' : 'open' }}
+      </span>
+    </div>
+    <div
+      class="example-accordion-item-body"
+      role="region"
+      [style.display]="accordionItem5.expanded ? '' : 'none'"
+      [attr.id]="'accordion-body-5'"
+      [attr.aria-labelledby]="'accordion-header-5'">
+      
+      <form [formGroup]="surveillanceForm"  (ngSubmit)="onSubmitSurveillance()">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Waypoints</mat-label>
+          <input formControlName="positions" type="text" matInput placeholder="x1 y1 z1 x2 y2 z2 ... xn yn zn">
+          <mat-icon matSuffix>gps_fixed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Linear Velocity</mat-label>
+          <input formControlName="linearVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Angular Velocity</mat-label>
+          <input formControlName="angularVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Number of tours</mat-label>
+          <input formControlName="numTour" type="number" matInput placeholder="1">
+          <mat-icon matSuffix>repeat</mat-icon>
+        </mat-form-field>
+        
+        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Surveillance
+          <mat-icon matSuffix>play_arrow</mat-icon>
+        </button>
+
+      </form>
+
+    </div>
+  </cdk-accordion-item>
+  <!-- Surveillance Mode Panel stop-->
+
+  <!-- Hover Mode Panel start-->
+  <cdk-accordion-item
+    #accordionItem6="cdkAccordionItem"
+    class="example-accordion-item"
+    role="button"
+    tabindex="0"
+    [attr.id]="'accordion-header-6'"
+    [attr.aria-expanded]="accordionItem3.expanded"
+    [attr.aria-controls]="'accordion-body-6'">
+    <div class="example-accordion-item-header" (click)="accordionItem6.toggle()">
+      Hover Mode (NED)
+      <span class="example-accordion-item-description">
+        Click to {{ accordionItem3.expanded ? 'close' : 'open' }}
+      </span>
+    </div>
+    <div
+      class="example-accordion-item-body"
+      role="region"
+      [style.display]="accordionItem6.expanded ? '' : 'none'"
+      [attr.id]="'accordion-body-6'"
+      [attr.aria-labelledby]="'accordion-header-6'">
+      
+      <form [formGroup]="hoverForm"  (ngSubmit)="onSubmitHover()">
+
+
+        <mat-form-field appearance="outline">
+          <mat-label>Waypoints</mat-label>
+          <input formControlName="positions" type="text" matInput placeholder="x1 y1 z1 x2 y2 z2 ... xn yn zn">
+          <mat-icon matSuffix>gps_fixed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Linear Velocity</mat-label>
+          <input formControlName="linearVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Angular Velocity</mat-label>
+          <input formControlName="angularVelocity" type="number" matInput placeholder="1.0">
+          <mat-icon matSuffix>speed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Duration</mat-label>
+          <input formControlName="duration" type="number" matInput placeholder="10">
+          <mat-icon matSuffix>alarm</mat-icon>
+        </mat-form-field>
+        
+        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Hover
+          <mat-icon matSuffix>play_arrow</mat-icon>
+        </button>
+      
+      </form>
+
+    </div>
+  </cdk-accordion-item>
+  <!-- Hover Mode Panel stop-->
+  <!-- NED coordinate custom flight modes start-->
 </cdk-accordion>
 <!-- Accordion end-->
 

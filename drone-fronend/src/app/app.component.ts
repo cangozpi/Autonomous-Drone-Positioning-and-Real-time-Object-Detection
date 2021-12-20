@@ -126,6 +126,7 @@ export class AppComponent implements OnInit {
 
   public map:any
   public infoWindow:any
+  public markers: google.maps.Marker[] = []; // holds the markers placed on the Google Map
 
   ngOnInit(): void {
     
@@ -144,36 +145,66 @@ export class AppComponent implements OnInit {
 
       this.centerMapToCurrentPosition(); // automatically center the map on the user geolocation
 
+      // read for click DOM events on the Google Map to add markers using callback
       this.map.addListener("click", (e:any) => {
         this.placeMarkerAndPanTo(e.latLng, this.map);
       });
 
-      this.markMap(); // puts marker on the map
     });
 
+    
   }
 
-  markMap():void{
-    // The marker, positioned at Uluru
-    const uluru = { lat: -25.344, lng: 131.036 };
 
-    const marker = new google.maps.Marker({
-      position: uluru,
-      map: this.map,
-      title: "Hello World"
-    });
 
-    marker.setMap(this.map);
-  }
-
+  // callback function that draws markers on the clicked position
   placeMarkerAndPanTo(latLng: google.maps.LatLng, map: google.maps.Map):void {
-    new google.maps.Marker({
+    // put the marker on the map
+    const marker = new google.maps.Marker({
       position: latLng,
       map: map,
+      label: `${this.markers.length + 1}`, // number each marker
+      draggable: true,
     });
+
+    // center the map wrt marker
     map.panTo(latLng);
+
+    // add newly added marker to the array
+    this.markers.push(marker);
   }
 
+
+  // cb function, hides or shows the given marker on the given map
+  setMapOnAll(map: google.maps.Map | null):void {
+    for (let i = 0; i < this.markers.length; i++) {
+      this.markers[i].setMap(map);
+    }
+  }
+
+  // Shows any markers currently in the array.
+  showMarkers(): void {
+    this.setMapOnAll(this.map);
+    this.markers.forEach((m => {
+      console.log(m.getPosition()?.lat())
+      console.log(m.getPosition()?.lng())
+      console.log(m.getPosition()?.toJSON())
+    }))
+  }
+
+  // Removes the markers from the map, but keeps them in the array.
+  hideMarkers(): void {
+    this.setMapOnAll(null);
+  }
+
+  // Deletes all markers in the array by removing references to them.
+  deleteMarkers(): void {
+    this.hideMarkers();
+    this.markers = [];
+  }
+
+
+  // centers map to the users geolocation
   centerMapToCurrentPosition():void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -198,7 +229,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-
+  // handles centerMapToCurrentPosition function's errors
   handleLocationError(
     browserHasGeolocation: boolean,
     infoWindow: google.maps.InfoWindow,
