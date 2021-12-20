@@ -1,5 +1,7 @@
 """
 Sample Call $python3.8 expose_stream.py --source 0 --droneLiveStream 
+can@can-ubuntu-18:~/drone_project/object-detector/yolov5/utils/drone_project_uls$ python3.8 expose_stream.py --source 0 --droneLiveStream --weight ../../best.pt
+
 """
 from flask import Flask, render_template, Response
 import cv2
@@ -31,7 +33,7 @@ def gen_frames():
             # the iteration of the loop
             if StreamConfig.outputFrame is None:
                 continue
-            # encode the frame in JPEG format
+            # encode the frame in JPEG format{{ url_for('video_feed') }}" 
             (flag, encodedImage) = cv2.imencode(".jpg", StreamConfig.outputFrame)
             if not flag:
                 continue
@@ -49,10 +51,10 @@ def detect(opt):
 
 ## test end--
 
-
-@app.route('/')
-def index():
-    return render_template('index.html')
+#
+#@app.route('/')
+#def index():
+#    return render_template('index.html')
 
 @app.route('/video_feed')
 def video_feed():
