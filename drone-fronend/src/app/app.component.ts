@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 
-//for form
+//For form
 import { FormGroup, FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+
+// For Google Maps
+import { Loader } from "@googlemaps/js-api-loader"
 
 
 @Component({
@@ -12,7 +15,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {}
   
   missionForm = new FormGroup({
@@ -118,6 +121,45 @@ export class AppComponent {
     })
 
   }
+
+  // Google Maps code starts here
+
+  public map:any
+
+  ngOnInit(): void {
+    
+    const loader = new Loader({
+      apiKey: "",
+      version: "weekly",
+      
+    });
+    loader.load().then(() => {
+      this.map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
+        center: { lat: -25.344, lng: 131.036 },
+        zoom: 8,
+      });
+
+      this.markMap(); // puts marker on the map
+    });
+
+  }
+
+  markMap():void{
+    // The marker, positioned at Uluru
+    const uluru = { lat: -25.344, lng: 131.036 };
+
+    const marker = new google.maps.Marker({
+      position: uluru,
+      map: this.map,
+      title: "Hello World"
+    });
+
+    //marker.setMap(this.map);
+    console.log("Sorry")
+  }
+
+
+  // Google Maps code ends here
 
 }
 
