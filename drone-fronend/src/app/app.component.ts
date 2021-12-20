@@ -125,6 +125,7 @@ export class AppComponent implements OnInit {
   // Google Maps code starts here
 
   public map:any
+  public infoWindow:any
 
   ngOnInit(): void {
     
@@ -137,6 +138,14 @@ export class AppComponent implements OnInit {
       this.map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
         center: { lat: -25.344, lng: 131.036 },
         zoom: 8,
+      });
+
+      this.infoWindow = new google.maps.InfoWindow();
+
+      this.centerMapToCurrentPosition(); // automatically center the map on the user geolocation
+
+      this.map.addListener("click", (e:any) => {
+        this.placeMarkerAndPanTo(e.latLng, this.map);
       });
 
       this.markMap(); // puts marker on the map
@@ -154,8 +163,54 @@ export class AppComponent implements OnInit {
       title: "Hello World"
     });
 
-    //marker.setMap(this.map);
-    console.log("Sorry")
+    marker.setMap(this.map);
+  }
+
+  placeMarkerAndPanTo(latLng: google.maps.LatLng, map: google.maps.Map):void {
+    new google.maps.Marker({
+      position: latLng,
+      map: map,
+    });
+    map.panTo(latLng);
+  }
+
+  centerMapToCurrentPosition():void {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position: GeolocationPosition) => {
+          const pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+
+          this.infoWindow.setPosition(pos);
+          this.infoWindow.setContent("Location found.");
+          this.infoWindow.open(this.map);
+          this.map.setCenter(pos);
+        },
+        () => {
+          this.handleLocationError(true, this.infoWindow, this.map.getCenter()!);
+        }
+      );
+    } else {
+      // Browser doesn't support Geolocation
+      this.handleLocationError(false, this.infoWindow, this.map.getCenter()!);
+    }
+  }
+
+
+  handleLocationError(
+    browserHasGeolocation: boolean,
+    infoWindow: google.maps.InfoWindow,
+    pos: google.maps.LatLng
+  ):void {
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(
+      browserHasGeolocation
+        ? "Error: The Geolocation service failed."
+        : "Error: Your browser doesn't support geolocation."
+    );
+    infoWindow.open(this.map);
   }
 
 
