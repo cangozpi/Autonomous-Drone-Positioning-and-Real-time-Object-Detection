@@ -104,6 +104,21 @@ export class AppComponent {
     })
   }
 
+  onSubmitArmDrone(arm_status:number) {
+    
+    // POST request body
+    let armStatusTemplate = {
+      arm_status: arm_status,
+    }
+    
+    //make POST request to server for /missionUpload
+    let url = "http://localhost:8080/armDrone"; //TODO: change localhost 
+    this.http.post(url, armStatusTemplate).toPromise().then((data:any) => {
+      console.log(data)
+    })
+
+  }
+
 }
 
 
