@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 
 // For Google Maps
 import { Loader } from "@googlemaps/js-api-loader"
-import { NONE_TYPE } from '@angular/compiler';
+import { GlobalPositionStrategy } from '@angular/cdk/overlay';
 
 
 @Component({
@@ -78,12 +78,13 @@ export class AppComponent implements OnInit {
     // POST request body
     let missionRequestTemplate = {
       positions: posArray,
+      altitude: this.missionFormALL.value.altitude,
       linear_velocity: this.missionFormALL.value.linearVelocity,
       angular_velocity: this.missionFormALL.value.angularVelocity
     }
     
     //make POST request to server for /missionUpload
-    let url = "http://localhost:8080/uploadMission"; //TODO: change localhost 
+    let url = "http://localhost:8080/uploadALLMission"; //TODO: change localhost 
     this.http.post(url, missionRequestTemplate).toPromise().then((data:any) => {
       console.log(data)
     })
@@ -101,13 +102,14 @@ export class AppComponent implements OnInit {
     // POST request body
     let surveillanceRequestTemplate = {
       positions: posArray,
+      altitude: this.missionFormALL.value.altitude,
       linear_velocity: this.surveillanceFormALL.value.linearVelocity,
       angular_velocity: this.surveillanceFormALL.value.angularVelocity,
       tour_num: this.surveillanceFormALL.value.numTour
     }
     
     //make POST request to server for /surveillanceUpload
-    let url = "http://localhost:8080/uploadSurveillance"; //TODO: change localhost 
+    let url = "http://localhost:8080/uploadALLSurveillance"; //TODO: change localhost 
     this.http.post(url, surveillanceRequestTemplate).toPromise().then((data:any) => {
       console.log(data)
     })
@@ -124,13 +126,14 @@ export class AppComponent implements OnInit {
     // POST request body
     let hoverRequestTemplate = {
       positions: posArray,
+      altitude: this.missionFormALL.value.altitude,
       linear_velocity: this.hoverFormALL.value.linearVelocity,
       angular_velocity: this.hoverFormALL.value.angularVelocity,
       duration: this.hoverFormALL.value.duration
     }
     
     //make POST request to server for /hoverUpload
-    let url = "http://localhost:8080/uploadHover"; //TODO: change localhost 
+    let url = "http://localhost:8080/uploadALLHover"; //TODO: change localhost 
     this.http.post(url, hoverRequestTemplate).toPromise().then((data:any) => {
       console.log(data)
     })
@@ -242,7 +245,7 @@ export class AppComponent implements OnInit {
     loader.load().then(() => {
       this.map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
         center: { lat: -25.344, lng: 131.036 },
-        zoom: 8,
+        zoom: 19,
       });
 
       this.infoWindow = new google.maps.InfoWindow();
@@ -380,6 +383,7 @@ export class AppComponent implements OnInit {
         
         posStr += `${cur_lat} ${cur_lng} `
       }))
+      posStr = posStr.substring(0, posStr.length-1);
       this.missionFormALL.patchValue({
         positions: posStr
       })
