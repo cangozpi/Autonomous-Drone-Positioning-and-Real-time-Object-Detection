@@ -1,6 +1,6 @@
 {
   "name": "drone-fronend",
-  "version": "0.0.0",
+  "version": "12.2.12",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
