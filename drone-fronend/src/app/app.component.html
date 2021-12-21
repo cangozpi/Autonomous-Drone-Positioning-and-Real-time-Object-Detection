@@ -401,7 +401,79 @@
 
 
     <!-- Right Pane start -->
-    <div class="col-5" style="background-color: indianred;">B</div>
+    <div class="col-5" style="background-color: indianred;">
+
+      <!-- Map Pane start -->
+      <div class="row" style="background-color: indigo;">
+        <div class="col w-100">
+
+          <!-- Google Map itself start -->
+          <div class="row w-100">
+            <div class="col ">
+              <!-- Google Maps start -->
+              <div class="w-100" style="height: 50vh;" id="map"></div>
+              <!-- Google Maps end -->
+            </div>
+          </div>
+          <!-- Google Map itself end -->
+
+          <!-- Google Map buttons start -->
+          <div class="row ">
+            <div class="col">
+
+              <div class="row">
+                <div class="col justify-content-center d-flex">              
+                  <div id="floating-panel">
+                    <input id="hide-markers" type="button" value="Hide Markers" (click)="hideMarkers()"/>
+                    <input id="show-markers" type="button" value="Show Markers" (click)="showMarkers()"/>
+                    <input id="delete-markers" type="button" value="Delete Markers" (click)="deleteMarkers()"/>
+                  </div>
+                </div>  
+              </div>
+  
+              <div class="row">
+                <div class="col justify-content-center d-flex">
+                  <div class="row">
+
+                    <mat-form-field class="col-7" appearance="fill">
+                      <mat-label>Choose mission to upload waypoints:</mat-label>
+                      <mat-select [(value)]="selectedMissionType">
+                        <mat-option value="missionMode" [disabled]="missionDisabled">Mission Mode (ALL)</mat-option>
+                        <mat-option value="surveillanceMode" [disabled]="surveillanceDisabled">Surveillance Mode (ALL)</mat-option>
+                        <mat-option value="hoverMode" [disabled]="hoverDisabled">Hover Mode (ALL)</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <button class="col-5 h-75" mat-raised-button color="primary" (click)="uploadWaypointsToMission()">Upload Waypoints</button>
+                  </div>
+                  
+                  
+                </div>
+              </div>
+              
+
+            </div>
+            
+          </div>
+          <!-- Google Map buttons end -->
+
+        </div>
+      </div>
+      <!-- Map Pane end -->
+
+      <!-- Obj Detector Stream start -->
+      <div class="row" style="background-color: khaki;">
+        <div class="col">
+          <!-- Object detector video stream start -->
+          <img class="w-100" style="height: 50vh;" alt="Object Detector Stream is not started!"  src="http://localhost:5000/video_feed"/>
+          <!-- Object detector video stream end -->
+
+        </div>
+      </div>
+      <!-- Obj Detector Stream end -->
+
+
+    </div>
     <!-- Right Pane end -->
   </div>
   <!-- Main Container end -->
@@ -410,36 +482,6 @@
 </div>
 
 
-
-
-<!-- Google Maps start -->
-<div class="full" id="map"></div>
-
-<div id="floating-panel">
-  <input id="hide-markers" type="button" value="Hide Markers" (click)="hideMarkers()"/>
-  <input id="show-markers" type="button" value="Show Markers" (click)="showMarkers()"/>
-  <input id="delete-markers" type="button" value="Delete Markers" (click)="deleteMarkers()"/>
-</div>
-<mat-form-field appearance="fill">
-  <mat-label>Choose mission to upload waypoints:</mat-label>
-  <mat-select [(value)]="selectedMissionType">
-    <mat-option value="missionMode" [disabled]="missionDisabled">Mission Mode (ALL)</mat-option>
-    <mat-option value="surveillanceMode" [disabled]="surveillanceDisabled">Surveillance Mode (ALL)</mat-option>
-    <mat-option value="hoverMode" [disabled]="hoverDisabled">Hover Mode (ALL)</mat-option>
-  </mat-select>
-</mat-form-field>
-<button mat-raised-button color="primary" (click)="uploadWaypointsToMission()">Upload Waypoints</button>
-<!-- Google Maps end -->
-
-
-
-<!-- Koc Drone icon start-->
-<img src="../assets/droneIcon.jpeg">
-<!-- Koc Drone icon end-->
-
-<!-- Object detector video stream start -->
-<img src="http://localhost:5000/video_feed"/>
-<!-- Object detector video stream end -->
 
 
 
