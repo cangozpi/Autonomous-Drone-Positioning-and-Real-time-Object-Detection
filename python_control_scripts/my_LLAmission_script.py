@@ -1,0 +1,322 @@
+#!/usr/bin/env python
+
+import rospy
+import mavros
+from geometry_msgs.msg import PoseStamped, Twist, Vector3
+from geographic_msgs.msg import GeoPoseStamped, GeoPose
+from sensor_msgs.msg import NavSatFix
+from mavros_msgs.msg import State, ParamValue
+from mavros_msgs.srv import CommandBool, SetMode, ParamSet
+#import math
+import numpy as np
+import argparse
+
+
+
+class CustomController:
+
+    def __init__(self):
+        mavros.set_namespace()
+
+        rospy.init_node('offb_node', anonymous=True)
+
+        self.rate = rospy.Rate(20) # MUST be more then 2Hz
+
+        self.current_state = State()
+        self.local_position = GeoPoseStamped()
+        #Determines if a setpoint location is assumed to be reached if drone is withing this distance
+        self.arrive_offset = 1 # in meters
+
+
+    def state_cb(self, state):
+        """
+        callback function for the 'State' topic subscriber
+        """
+        self.current_state = state
+
+
+    def local_position_pose_callback(self, data):
+        # Convert NavSatFix msg to GeoPoseStamped
+        temp_pos = GeoPoseStamped()
+        temp_pos.pose.position.latitude = data.latitude
+        temp_pos.pose.position.longitude = data.longitude
+        temp_pos.pose.position.altitude = data.altitude
+        # update the parameter
+        self.local_position = temp_pos
+
+
+    def setModeOFFBoard(self):
+        """
+        Tries to set Flight Mode to OFFBOARD mode
+        NOTE: Before entering Offboard mode, you must have already started streaming setpoints. Otherwise the mode switch will be rejected.
+        """
+        # exempting failsafe from lost RC to allow offboard
+        param_id = "COM_RCL_EXCEPT"
+        param_value = ParamValue(1<<2, 0.0)
+        res = self.set_param_srv(param_id, param_value)
+        if not res.success:
+            rospy.logerr("failure during setting param in setModeOFFBoard")
+
+        # set the flight mode
+        rospy.loginfo("setting FCU mode: {0}".format("OFFBOARD"))
+        if self.current_state.mode != "OFFBOARD" : # set flight mode to 'OFFBOARD'
+            res = self.set_mode_client(base_mode=0, custom_mode="OFFBOARD")
+            if not res.mode_sent:
+                rospy.logerr("failed to send mode command")
+            else:
+                rospy.loginfo("successfully set Flight Mode to OFFBOARD")
+
+
+    def setLandMode(self):
+        """
+        Tries to set Flight Mode to OFFBOARD mode
+        NOTE: Before entering Offboard mode, you must have already started streaming setpoints. Otherwise the mode switch will be rejected.
+        """
+        # set the flight mode
+        rospy.loginfo("setting FCU mode: {0}".format("AUTO.LAND"))
+        if self.current_state.mode != "AUTO.LAND" : # set flight mode to 'OFFBOARD'
+            res = self.set_mode_client(base_mode=0, custom_mode="AUTO.LAND")
+            if not res.mode_sent:
+                rospy.logerr("failed to send mode command")
+            else:
+                rospy.loginfo("successfully set Flight Mode to AUTO.LAND")
+
+
+    def armDrone(self):
+        """
+        Tries to arm the drone
+        """
+        rospy.loginfo("arming the drone")
+        if not self.current_state.armed:
+            res = self.arming_client(True)
+            if not res.success:
+                rospy.logerr("failed to send arm command")
+            else:
+                rospy.loginfo("drone successfully armed")
+
+    def disarmDrone(self):
+        """
+        Tries to arm the drone
+        """
+        rospy.loginfo("disarming the drone")
+        if not self.current_state.armed:
+            res = self.arming_client(False)
+            if not res.success:
+                rospy.logerr("failed to send disarm command")
+            else:
+                rospy.loginfo("drone successfully disarmed")
+
+
+    def is_at_position(self, lat, lng, alt, offset):
+        """
+        checks if drone(self.local_position) is at the given x, y, x coordinate
+        NOTE: offset: meters
+        """
+
+        desired = np.array((lat, lng, alt))
+        pos = np.array((self.local_position.pose.position.latitude,
+                        self.local_position.pose.position.longitude,
+                        self.local_position.pose.position.altitude))
+        return np.linalg.norm(desired - pos) < offset
+
+
+    def reach_position(self, lat, lng, altitude, vel_lin, vel_ang):
+        """
+        commands drone to reach the given x, y, z coordinates
+        """
+        # set a position setpoint
+        pose = GeoPoseStamped()
+        # std_msgs/Header header
+        pose.header.stamp = rospy.Time.now()
+        # geometry_msgs/Pose pose
+        pose.pose.position.latitude = lat
+        pose.pose.position.longitude = lng
+        pose.pose.position.altitude = altitude
+
+        # create local_position_velocity message to be published
+        vel = Twist()
+        vel.linear = Vector3(vel_lin, vel_lin, vel_lin)
+        vel.angular = Vector3(vel_ang, vel_ang, vel_ang)
+
+        rospy.loginfo(
+            "attempting to reach position | lat: {0}, lng: {1}, alt: {2} | current position lat: {3:.2f}, lng: {4:.2f}, alt: {5:.2f} | linear speed: {6:.2f}, angular speed: {7:.2f} ".
+            format(lat, lng, altitude,
+                self.local_position.pose.position.latitude,
+                self.local_position.pose.position.longitude,
+                self.local_position.pose.position.altitude,
+                vel_lin,
+                vel_ang))
+
+        # uncomment if you want to lock yaw/heading to north.
+        # yaw_degrees = 0  # North
+        # yaw = math.radians(yaw_degrees)
+        # quaternion = quaternion_from_euler(0, 0, yaw)
+        # pose.pose.orientation = Quaternion(*quaternion)
+
+
+        while not rospy.is_shutdown(): # wait for drone to reach the desired setpoint position
+            self.local_pos_pub.publish(pose)#publish position
+            self.vel_pub.publish(vel)#publish velocity
+            if self.is_at_position(pose.pose.position.latitude,
+                                   pose.pose.position.longitude,
+                                   pose.pose.position.altitude,
+                                   self.arrive_offset):
+                rospy.loginfo("position reached")
+                break
+            self.rate.sleep() # rate must be higher than 2Hz or else OFFBOARD will be aborted
+
+
+
+    def position_control(self, positions, altitude, vel_lin, vel_ang):
+        prev_state = self.current_state
+
+        # NOTE: Before entering Offboard mode, you must have already started streaming setpoints. Otherwise the mode switch will be rejected.
+        # send a few setpoints before starting
+        for i in range(100):
+            self.local_pos_pub.publish(self.local_position)
+            self.rate.sleep()
+        self.setModeOFFBoard() # set Flight mode to OFFBOARD
+
+        self.armDrone() # arm the drone before takeoff
+
+        while not rospy.is_shutdown():#TODO: get rid of this while loop we only want to traverse wp's once!
+
+            # log changes in the arm status & flight mode status
+            if prev_state.armed != self.current_state.armed:
+                rospy.loginfo("Vehicle armed: %r" % self.current_state.armed)
+            if prev_state.mode != self.current_state.mode:
+                rospy.loginfo("Current mode: %s" % self.current_state.mode)
+            prev_state = self.current_state
+
+
+            # check if the drone is armed and in OFFBOARD flight mode before flying to setpoints
+            if self.current_state.armed and self.current_state.mode == "OFFBOARD":
+                # set out to reach waypoints one by one in order
+                for i in range(len(positions)):
+                    self.reach_position(positions[i][0], positions[i][1], altitude, vel_lin, vel_ang)
+
+                # land the drone
+                self.setLandMode()
+                # disarm the drone
+                self.disarmDrone()
+                break
+            self.rate.sleep()
+
+
+    # makes sure to connect to services before hand
+    def checkForServices(self):
+        """
+        Tries to initialize the services
+        """
+        service_timeout = 30
+        rospy.loginfo("waiting for ROS services")
+        try:
+            #rospy.wait_for_service('mavros/param/get', service_timeout)
+            #rospy.wait_for_service('mavros/param/set', service_timeout)
+            #rospy.wait_for_service('mavros/mission/push', service_timeout)
+            #rospy.wait_for_service('mavros/mission/clear', service_timeout)
+            rospy.wait_for_service('mavros/cmd/arming', service_timeout)
+            rospy.wait_for_service('mavros/set_mode', service_timeout)
+            rospy.wait_for_service('mavros/param/set', service_timeout)
+            self.arming_client = rospy.ServiceProxy('mavros/cmd/arming', CommandBool) # mavros/cmd/arming
+            self.set_mode_client = rospy.ServiceProxy('mavros/set_mode', SetMode) # mavros/set_mode
+            self.set_param_srv = rospy.ServiceProxy('mavros/param/set', ParamSet)
+        except rospy.ROSException:
+            rospy.logerr("failed to connect to services")
+        rospy.loginfo("ROS services are up")
+        rospy.loginfo("successfully connected to the ROS services.")
+
+
+    # makes sure to connect to topics before hand
+    def checkForTopics(self):
+        """
+        Tries to initialize the Subscribers/Publishers
+        """
+        try:
+            self.local_pos_pub = rospy.Publisher('mavros/setpoint_position/global', GeoPoseStamped, queue_size=10)
+            self.vel_pub = rospy.Publisher('mavros/setpoint_velocity/cmd_vel_unstamped', Twist, queue_size=10)
+            self.state_sub = rospy.Subscriber(mavros.get_topic('state'), State, self.state_cb)
+            self.local_pos_sub = rospy.Subscriber('mavros/global_position/global', NavSatFix, self.local_position_pose_callback)
+        except rospy.ROSException:
+            rospy.logerr("failed to initialize Publishers/Subscribers")
+
+    def checkForFCU(self):
+        """
+        Tries to establish a FCU connection
+        """
+        # wait for FCU connection
+        rospy.loginfo("waiting for FCU connection")
+        while not self.current_state.connected:
+            self.rate.sleep()
+        rospy.loginfo("FCU connection established")
+
+#=========================================================
+
+def parsePositions():
+    """
+    Parses position arguments passed in as command line arguments with --positions flag.
+    e.g. --positions lat1 lng1 lat2 lng2 ... latn lngn ; where x,y,z are floats
+
+    Sample call:
+        $python2.7 my_LLAmission_script.py --positions 23.99190860370338 19.118112768717193 23.99179522951569 19.11835684973755 --altitude 785 --linear_velocity 4 --angular_velocity 4
+    
+    """
+    CLI=argparse.ArgumentParser()
+    CLI.add_argument(
+    "--positions",  # name on the CLI - drop the `--` for positional/required parameters
+    nargs="*",  # 0 or more values expected => creates a list
+    type=float,
+    default=[],  # default if nothing is provided,
+    required=True,
+    )
+
+    CLI.add_argument(
+    "--altitude",  # name on the CLI - drop the `--` for positional/required parameters
+    type=float,
+    required=True
+    )
+
+    CLI.add_argument(
+    "--linear_velocity",  # name on the CLI - drop the `--` for positional/required parameters
+    type=float,
+    required=True
+    )
+
+    CLI.add_argument(
+    "--angular_velocity",  # name on the CLI - drop the `--` for positional/required parameters
+    type=float,
+    required=True,
+    )
+
+    args = CLI.parse_args()
+    positions = args.positions
+    if len(positions) > 0 and len(positions)%2 == 0:
+        pos = []
+        for i in range(0,len(positions)-1, 2):
+            lat = positions[i]
+            lng = positions[i+1]
+            pos.append((lat,lng))
+
+    else:
+        print("terminating the script. Couldn't parse command line arguments")
+        exit()
+
+    return pos, args.altitude, args.linear_velocity, args.angular_velocity
+
+#=========================================================
+
+if __name__ == '__main__':
+    """
+    Sample call:
+        $python2.7 my_LLAmission_script.py --positions 23.99190860370338 19.118112768717193 23.99179522951569 19.11835684973755 --altitude 785 --linear_velocity 4 --angular_velocity 4
+    """
+    try:
+        positions, altitude, vel_lin, vel_ang = parsePositions()
+        customController = CustomController()
+        customController.checkForServices()
+        customController.checkForTopics()
+        customController.checkForFCU()
+        customController.position_control(positions, altitude, vel_lin, vel_ang)
+    except rospy.ROSInterruptException:
+        rospy.logerr("Something went wrong!")
+        pass
