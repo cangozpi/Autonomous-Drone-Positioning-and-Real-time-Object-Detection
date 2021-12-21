@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 
 // For Google Maps
 import { Loader } from "@googlemaps/js-api-loader"
+import { NONE_TYPE } from '@angular/compiler';
 
 
 @Component({
@@ -18,30 +19,58 @@ import { Loader } from "@googlemaps/js-api-loader"
 export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {}
   
-  missionForm = new FormGroup({
+
+
+  missionFormALL = new FormGroup({
+    positions: new FormControl(''),
+    altitude: new FormControl(''),
+    linearVelocity: new FormControl(''),
+    angularVelocity: new FormControl(''),
+    
+  });
+
+  surveillanceFormALL = new FormGroup({
+    positions: new FormControl(''),
+    altitude: new FormControl(''),
+    linearVelocity: new FormControl(''),
+    angularVelocity: new FormControl(''),
+    numTour: new FormControl(''),
+  });
+
+  hoverFormALL = new FormGroup({
+    positions: new FormControl(''),
+    altitude: new FormControl(''),
+    linearVelocity: new FormControl(''),
+    angularVelocity: new FormControl(''),
+    duration: new FormControl(''),
+  });
+
+  missionFormNED = new FormGroup({
     positions: new FormControl(''),
     linearVelocity: new FormControl(''),
     angularVelocity: new FormControl(''),
   });
 
-  surveillanceForm = new FormGroup({
+  surveillanceFormNED = new FormGroup({
     positions: new FormControl(''),
     linearVelocity: new FormControl(''),
     angularVelocity: new FormControl(''),
     numTour: new FormControl(''),
   });
 
-  hoverForm = new FormGroup({
+  hoverFormNED = new FormGroup({
     positions: new FormControl(''),
     linearVelocity: new FormControl(''),
     angularVelocity: new FormControl(''),
     duration: new FormControl(''),
   });
 
-  onSubmitMission() {
+
+
+  onSubmitMissionALL() {
     //convert positions form value to the desired array format
     let posArray:any = [];
-    let pos:any = this.missionForm.value.positions.split(" ")
+    let pos:any = this.missionFormALL.value.positions.split(" ")
     for(let i = 0; i < pos.length; i++){
       posArray.push(pos[i]) 
     }
@@ -49,8 +78,8 @@ export class AppComponent implements OnInit {
     // POST request body
     let missionRequestTemplate = {
       positions: posArray,
-      linear_velocity: this.missionForm.value.linearVelocity,
-      angular_velocity: this.missionForm.value.angularVelocity
+      linear_velocity: this.missionFormALL.value.linearVelocity,
+      angular_velocity: this.missionFormALL.value.angularVelocity
     }
     
     //make POST request to server for /missionUpload
@@ -61,10 +90,10 @@ export class AppComponent implements OnInit {
 
   }
 
-  onSubmitSurveillance() {
+  onSubmitSurveillanceALL() {
      //convert positions form value to the desired array format
     let posArray:any = [];
-    let pos:any = this.surveillanceForm.value.positions.split(" ")
+    let pos:any = this.surveillanceFormALL.value.positions.split(" ")
     for(let i = 0; i < pos.length; i++){
       posArray.push(pos[i]) 
     }
@@ -72,9 +101,9 @@ export class AppComponent implements OnInit {
     // POST request body
     let surveillanceRequestTemplate = {
       positions: posArray,
-      linear_velocity: this.surveillanceForm.value.linearVelocity,
-      angular_velocity: this.surveillanceForm.value.angularVelocity,
-      tour_num: this.surveillanceForm.value.numTour
+      linear_velocity: this.surveillanceFormALL.value.linearVelocity,
+      angular_velocity: this.surveillanceFormALL.value.angularVelocity,
+      tour_num: this.surveillanceFormALL.value.numTour
     }
     
     //make POST request to server for /surveillanceUpload
@@ -84,10 +113,10 @@ export class AppComponent implements OnInit {
     })
   }
 
-  onSubmitHover() {
+  onSubmitHoverALL() {
     //convert positions form value to the desired array format
     let posArray:any = [];
-    let pos:any = this.hoverForm.value.positions.split(" ")
+    let pos:any = this.hoverFormALL.value.positions.split(" ")
     for(let i = 0; i < pos.length; i++){
       posArray.push(pos[i]) 
     }
@@ -95,9 +124,80 @@ export class AppComponent implements OnInit {
     // POST request body
     let hoverRequestTemplate = {
       positions: posArray,
-      linear_velocity: this.hoverForm.value.linearVelocity,
-      angular_velocity: this.hoverForm.value.angularVelocity,
-      duration: this.hoverForm.value.duration
+      linear_velocity: this.hoverFormALL.value.linearVelocity,
+      angular_velocity: this.hoverFormALL.value.angularVelocity,
+      duration: this.hoverFormALL.value.duration
+    }
+    
+    //make POST request to server for /hoverUpload
+    let url = "http://localhost:8080/uploadHover"; //TODO: change localhost 
+    this.http.post(url, hoverRequestTemplate).toPromise().then((data:any) => {
+      console.log(data)
+    })
+  }
+
+
+
+  onSubmitMissionNED() {
+    //convert positions form value to the desired array format
+    let posArray:any = [];
+    let pos:any = this.missionFormNED.value.positions.split(" ")
+    for(let i = 0; i < pos.length; i++){
+      posArray.push(pos[i]) 
+    }
+    
+    // POST request body
+    let missionRequestTemplate = {
+      positions: posArray,
+      linear_velocity: this.missionFormNED.value.linearVelocity,
+      angular_velocity: this.missionFormNED.value.angularVelocity
+    }
+    
+    //make POST request to server for /missionUpload
+    let url = "http://localhost:8080/uploadMission"; //TODO: change localhost 
+    this.http.post(url, missionRequestTemplate).toPromise().then((data:any) => {
+      console.log(data)
+    })
+
+  }
+
+  onSubmitSurveillanceNED() {
+     //convert positions form value to the desired array format
+    let posArray:any = [];
+    let pos:any = this.surveillanceFormNED.value.positions.split(" ")
+    for(let i = 0; i < pos.length; i++){
+      posArray.push(pos[i]) 
+    }
+    
+    // POST request body
+    let surveillanceRequestTemplate = {
+      positions: posArray,
+      linear_velocity: this.surveillanceFormNED.value.linearVelocity,
+      angular_velocity: this.surveillanceFormNED.value.angularVelocity,
+      tour_num: this.surveillanceFormNED.value.numTour
+    }
+    
+    //make POST request to server for /surveillanceUpload
+    let url = "http://localhost:8080/uploadSurveillance"; //TODO: change localhost 
+    this.http.post(url, surveillanceRequestTemplate).toPromise().then((data:any) => {
+      console.log(data)
+    })
+  }
+
+  onSubmitHoverNED() {
+    //convert positions form value to the desired array format
+    let posArray:any = [];
+    let pos:any = this.hoverFormNED.value.positions.split(" ")
+    for(let i = 0; i < pos.length; i++){
+      posArray.push(pos[i]) 
+    }
+    
+    // POST request body
+    let hoverRequestTemplate = {
+      positions: posArray,
+      linear_velocity: this.hoverFormNED.value.linearVelocity,
+      angular_velocity: this.hoverFormNED.value.angularVelocity,
+      duration: this.hoverFormNED.value.duration
     }
     
     //make POST request to server for /hoverUpload
@@ -127,6 +227,10 @@ export class AppComponent implements OnInit {
   public map:any
   public infoWindow:any
   public markers: google.maps.Marker[] = []; // holds the markers placed on the Google Map
+  public missionDisabled: boolean = false;
+  public surveillanceDisabled: boolean = false;
+  public hoverDisabled: boolean = false;
+  public selectedMissionType: String = ""
 
   ngOnInit(): void {
     
@@ -172,24 +276,41 @@ export class AppComponent implements OnInit {
 
     // add newly added marker to the array
     this.markers.push(marker);
+
+    // check for disabling upload mission select choices
+    this.checkMissionUploadDisable();
   }
 
+
+  // function to set disable property of misison upload select option
+  checkMissionUploadDisable():void {
+    if (this.markers.length < 1){
+      this.missionDisabled = true;
+      this.surveillanceDisabled = true;
+      this.hoverDisabled = true;
+    }else if(this.markers.length >1){
+      this.missionDisabled = false;
+      this.surveillanceDisabled = false;
+      this.hoverDisabled = true;
+    }else{
+      this.missionDisabled = false;
+      this.surveillanceDisabled = false;
+      this.hoverDisabled = false;
+    }
+  }
 
   // cb function, hides or shows the given marker on the given map
   setMapOnAll(map: google.maps.Map | null):void {
     for (let i = 0; i < this.markers.length; i++) {
       this.markers[i].setMap(map);
     }
+    // check for disabling upload mission select choices
+    this.checkMissionUploadDisable();
   }
 
   // Shows any markers currently in the array.
   showMarkers(): void {
     this.setMapOnAll(this.map);
-    this.markers.forEach((m => {
-      console.log(m.getPosition()?.lat())
-      console.log(m.getPosition()?.lng())
-      console.log(m.getPosition()?.toJSON())
-    }))
   }
 
   // Removes the markers from the map, but keeps them in the array.
@@ -201,6 +322,8 @@ export class AppComponent implements OnInit {
   deleteMarkers(): void {
     this.hideMarkers();
     this.markers = [];
+    // check for disabling upload mission select choices
+    this.checkMissionUploadDisable();
   }
 
 
@@ -244,6 +367,46 @@ export class AppComponent implements OnInit {
     infoWindow.open(this.map);
   }
 
+  // Google Maps form functions below
+
+  // transfer waypoints from Google Map marks to Custom Mission Accordion menu waypoint form input
+  uploadWaypointsToMission():void{
+    // transfer waypoints according to the select menu's value
+    if(this.selectedMissionType == "missionMode"){
+      let posStr:String = ""
+      this.markers.forEach((m => {
+        const cur_lat = m.getPosition()?.lat();
+        const cur_lng = m.getPosition()?.lng();
+        
+        posStr += `${cur_lat} ${cur_lng} `
+      }))
+      this.missionFormALL.patchValue({
+        positions: posStr
+      })
+    }else if(this.selectedMissionType == "surveillanceMode"){
+      let posStr:String = ""
+      this.markers.forEach((m => {
+        const cur_lat = m.getPosition()?.lat();
+        const cur_lng = m.getPosition()?.lng();
+        
+        posStr += `${cur_lat} ${cur_lng} `
+      }))
+      this.surveillanceFormALL.patchValue({
+        positions: posStr
+      })
+    }else if(this.selectedMissionType == "hoverMode"){
+      let posStr:String = ""
+      this.markers.forEach((m => {
+        const cur_lat = m.getPosition()?.lat();
+        const cur_lng = m.getPosition()?.lng();
+        
+        posStr += `${cur_lat} ${cur_lng} `
+      }))
+      this.hoverFormALL.patchValue({
+        positions: posStr
+      })
+    }
+  }
 
   // Google Maps code ends here
 

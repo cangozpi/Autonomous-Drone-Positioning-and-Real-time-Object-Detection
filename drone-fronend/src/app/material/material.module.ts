@@ -6,6 +6,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
+import {MatSelectModule} from '@angular/material/select';
 
 /* For form*/
 import { ReactiveFormsModule } from '@angular/forms';
@@ -21,7 +22,8 @@ const MaterialComponents = [
   HttpClientModule,
   MatInputModule,
   MatIconModule,
-  MatButtonModule
+  MatButtonModule,
+  MatSelectModule
 ];
 
 @NgModule({

@@ -11,6 +11,15 @@
   <input id="show-markers" type="button" value="Show Markers" (click)="showMarkers()"/>
   <input id="delete-markers" type="button" value="Delete Markers" (click)="deleteMarkers()"/>
 </div>
+<mat-form-field appearance="fill">
+  <mat-label>Choose mission to upload waypoints:</mat-label>
+  <mat-select [(value)]="selectedMissionType">
+    <mat-option value="missionMode" [disabled]="missionDisabled">Mission Mode (ALL)</mat-option>
+    <mat-option value="surveillanceMode" [disabled]="surveillanceDisabled">Surveillance Mode (ALL)</mat-option>
+    <mat-option value="hoverMode" [disabled]="hoverDisabled">Hover Mode (ALL)</mat-option>
+  </mat-select>
+</mat-form-field>
+<button mat-raised-button color="primary" (click)="uploadWaypointsToMission()">Upload Waypoints</button>
 <!-- Google Maps end -->
 
 
@@ -50,12 +59,18 @@
       [style.display]="accordionItem1.expanded ? '' : 'none'"
       [attr.id]="'accordion-body-1'"
       [attr.aria-labelledby]="'accordion-header-1'">
-      <form [formGroup]="missionForm"  (ngSubmit)="onSubmitMission()">
+      <form [formGroup]="missionFormALL"  (ngSubmit)="onSubmitMissionALL()">
 
         <mat-form-field appearance="outline">
           <mat-label>Waypoints</mat-label>
-          <input formControlName="positions" type="text" matInput placeholder="x1 y1 z1 x2 y2 z2 ... xn yn zn">
+          <input formControlName="positions" type="text" matInput placeholder="lat1 lng1 lat2 lng2 ... latn lngn">
           <mat-icon matSuffix>gps_fixed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Altitude</mat-label>
+          <input formControlName="altitude" type="number" matInput placeholder="15">
+          <mat-icon matSuffix>height</mat-icon>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -70,7 +85,7 @@
           <mat-icon matSuffix>speed</mat-icon>
         </mat-form-field>
         
-        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Mission
+        <button type="submit" [disabled]="!missionFormALL.valid" mat-raised-button color="primary">Start Mission
           <mat-icon matSuffix>play_arrow</mat-icon>
         </button>
 
@@ -101,12 +116,18 @@
       [attr.id]="'accordion-body-2'"
       [attr.aria-labelledby]="'accordion-header-2'">
       
-      <form [formGroup]="surveillanceForm"  (ngSubmit)="onSubmitSurveillance()">
+      <form [formGroup]="surveillanceFormALL"  (ngSubmit)="onSubmitSurveillanceALL()">
 
         <mat-form-field appearance="outline">
           <mat-label>Waypoints</mat-label>
-          <input formControlName="positions" type="text" matInput placeholder="x1 y1 z1 x2 y2 z2 ... xn yn zn">
+          <input formControlName="positions" type="text" matInput placeholder="lat1 lng1 lat2 lng2 ... latn lngn">
           <mat-icon matSuffix>gps_fixed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Altitude</mat-label>
+          <input formControlName="altitude" type="number" matInput placeholder="15">
+          <mat-icon matSuffix>height</mat-icon>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -127,7 +148,7 @@
           <mat-icon matSuffix>repeat</mat-icon>
         </mat-form-field>
         
-        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Surveillance
+        <button type="submit" [disabled]="!surveillanceFormALL.valid" mat-raised-button color="primary">Start Surveillance
           <mat-icon matSuffix>play_arrow</mat-icon>
         </button>
 
@@ -159,13 +180,19 @@
       [attr.id]="'accordion-body-3'"
       [attr.aria-labelledby]="'accordion-header-3'">
       
-      <form [formGroup]="hoverForm"  (ngSubmit)="onSubmitHover()">
+      <form [formGroup]="hoverFormALL"  (ngSubmit)="onSubmitHoverALL()">
 
 
         <mat-form-field appearance="outline">
           <mat-label>Waypoints</mat-label>
-          <input formControlName="positions" type="text" matInput placeholder="x1 y1 z1 x2 y2 z2 ... xn yn zn">
+          <input formControlName="positions" type="text" matInput placeholder="lat lng">
           <mat-icon matSuffix>gps_fixed</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Altitude</mat-label>
+          <input formControlName="altitude" type="number" matInput placeholder="15">
+          <mat-icon matSuffix>height</mat-icon>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -186,7 +213,7 @@
           <mat-icon matSuffix>alarm</mat-icon>
         </mat-form-field>
         
-        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Hover
+        <button type="submit" [disabled]="!hoverFormALL.valid" mat-raised-button color="primary">Start Hover
           <mat-icon matSuffix>play_arrow</mat-icon>
         </button>
       
@@ -219,7 +246,7 @@
       [style.display]="accordionItem4.expanded ? '' : 'none'"
       [attr.id]="'accordion-body-4'"
       [attr.aria-labelledby]="'accordion-header-4'">
-      <form [formGroup]="missionForm"  (ngSubmit)="onSubmitMission()">
+      <form [formGroup]="missionFormNED"  (ngSubmit)="onSubmitMissionNED()">
 
         <mat-form-field appearance="outline">
           <mat-label>Waypoints</mat-label>
@@ -239,7 +266,7 @@
           <mat-icon matSuffix>speed</mat-icon>
         </mat-form-field>
         
-        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Mission
+        <button type="submit" [disabled]="!missionFormNED.valid" mat-raised-button color="primary">Start Mission
           <mat-icon matSuffix>play_arrow</mat-icon>
         </button>
 
@@ -270,7 +297,7 @@
       [attr.id]="'accordion-body-5'"
       [attr.aria-labelledby]="'accordion-header-5'">
       
-      <form [formGroup]="surveillanceForm"  (ngSubmit)="onSubmitSurveillance()">
+      <form [formGroup]="surveillanceFormNED"  (ngSubmit)="onSubmitSurveillanceNED()">
 
         <mat-form-field appearance="outline">
           <mat-label>Waypoints</mat-label>
@@ -296,7 +323,7 @@
           <mat-icon matSuffix>repeat</mat-icon>
         </mat-form-field>
         
-        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Surveillance
+        <button type="submit" [disabled]="!surveillanceFormNED.valid" mat-raised-button color="primary">Start Surveillance
           <mat-icon matSuffix>play_arrow</mat-icon>
         </button>
 
@@ -328,12 +355,12 @@
       [attr.id]="'accordion-body-6'"
       [attr.aria-labelledby]="'accordion-header-6'">
       
-      <form [formGroup]="hoverForm"  (ngSubmit)="onSubmitHover()">
+      <form [formGroup]="hoverFormNED"  (ngSubmit)="onSubmitHoverNED()">
 
 
         <mat-form-field appearance="outline">
           <mat-label>Waypoints</mat-label>
-          <input formControlName="positions" type="text" matInput placeholder="x1 y1 z1 x2 y2 z2 ... xn yn zn">
+          <input formControlName="positions" type="text" matInput placeholder="x y z">
           <mat-icon matSuffix>gps_fixed</mat-icon>
         </mat-form-field>
 
@@ -355,7 +382,7 @@
           <mat-icon matSuffix>alarm</mat-icon>
         </mat-form-field>
         
-        <button type="submit" [disabled]="!missionForm.valid" mat-raised-button color="primary">Start Hover
+        <button type="submit" [disabled]="!hoverFormNED.valid" mat-raised-button color="primary">Start Hover
           <mat-icon matSuffix>play_arrow</mat-icon>
         </button>
       
